@@ -1,4 +1,6 @@
-import { Alert, Modal, Pressable, Text, TouchableOpacity, View } from 'react-native';
+import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
+import { useState } from 'react';
+import { Alert, Modal, Platform, Pressable, Text, TouchableOpacity, View } from 'react-native';
 
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { LAYER_LIST, type LayerId } from '@/constants/layers';
@@ -14,6 +16,9 @@ import { formatReminder } from '@/lib/time';
 
 const c = Colors.dark;
 
+/** Default starting point for the custom picker: one hour from now. */
+const oneHourFromNow = () => new Date(Date.now() + 60 * 60 * 1000);
+
 /**
  * Bottom-sheet actions for a captured item: move it to a different layer
  * (to correct an AI misclassification), set/clear a reminder, or delete it.
@@ -28,11 +33,21 @@ export function ItemActionsSheet({
   onClose: () => void;
   onChanged: () => void;
 }) {
+  // On iOS the custom picker renders inline in the sheet; this holds its
+  // working value (null = not in custom-pick mode). Android uses native
+  // dialogs instead, so this stays null there.
+  const [customDate, setCustomDate] = useState<Date | null>(null);
+
+  const close = () => {
+    setCustomDate(null);
+    onClose();
+  };
+
   const move = (layer: LayerId) => {
     if (!item || layer === item.layer) return;
     updateItemLayer(item.id, layer);
     onChanged();
-    onClose();
+    close();
   };
 
   const setReminder = async (date: Date) => {
@@ -49,7 +64,7 @@ export function ItemActionsSheet({
     setItemDue(item.id, iso);
     await scheduleReminder(item.id, item.text, iso);
     onChanged();
-    onClose();
+    close();
   };
 
   const clearReminder = async () => {
@@ -57,7 +72,34 @@ export function ItemActionsSheet({
     setItemDue(item.id, null);
     await cancelReminder(item.id);
     onChanged();
-    onClose();
+    close();
+  };
+
+  // "Custom…": Android opens native date then time dialogs; iOS shows the
+  // inline picker inside the sheet.
+  const openCustom = () => {
+    if (Platform.OS === 'android') {
+      DateTimePickerAndroid.open({
+        value: oneHourFromNow(),
+        mode: 'date',
+        minimumDate: new Date(),
+        onChange: (dateEvent, picked) => {
+          if (dateEvent.type !== 'set' || !picked) return;
+          DateTimePickerAndroid.open({
+            value: picked,
+            mode: 'time',
+            onChange: (timeEvent, time) => {
+              if (timeEvent.type !== 'set' || !time) return;
+              const combined = new Date(picked);
+              combined.setHours(time.getHours(), time.getMinutes(), 0, 0);
+              setReminder(combined);
+            },
+          });
+        },
+      });
+    } else {
+      setCustomDate(oneHourFromNow());
+    }
   };
 
   const confirmDelete = () => {
@@ -71,20 +113,56 @@ export function ItemActionsSheet({
           deleteItem(item.id);
           await cancelReminder(item.id);
           onChanged();
-          onClose();
+          close();
         },
       },
     ]);
   };
 
   return (
-    <Modal visible={item !== null} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable className="flex-1 justify-end bg-black/60" onPress={onClose}>
+    <Modal visible={item !== null} transparent animationType="slide" onRequestClose={close}>
+      <Pressable className="flex-1 justify-end bg-black/60" onPress={close}>
         {/* Empty onPress captures the touch so the backdrop above doesn't close it. */}
         <Pressable
           className="gap-md rounded-t-lg border-t border-border bg-surface p-lg"
           onPress={() => {}}>
-          {item ? (
+          {item && customDate ? (
+            // iOS custom date/time picker
+            <>
+              <Text className="text-muted tracking-[0.5px]" style={Type.small}>
+                Pick a date & time
+              </Text>
+              <DateTimePicker
+                value={customDate}
+                mode="datetime"
+                display="inline"
+                minimumDate={new Date()}
+                themeVariant="dark"
+                accentColor={c.accent}
+                onChange={(_event, picked) => {
+                  if (picked) setCustomDate(picked);
+                }}
+              />
+              <View className="flex-row gap-sm">
+                <TouchableOpacity
+                  className="h-11 flex-1 items-center justify-center rounded-sm border border-border"
+                  onPress={() => setCustomDate(null)}
+                  activeOpacity={0.85}>
+                  <Text className="text-text" style={Type.bodyMedium}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  className="h-11 flex-1 items-center justify-center rounded-sm bg-accent"
+                  onPress={() => setReminder(customDate)}
+                  activeOpacity={0.85}>
+                  <Text className="text-accent-text" style={Type.bodyMedium}>
+                    Set reminder
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          ) : item ? (
             <>
               <Text className="text-text" style={Type.body} numberOfLines={3}>
                 {item.text}
@@ -144,6 +222,14 @@ export function ItemActionsSheet({
                     </Text>
                   </TouchableOpacity>
                 ))}
+                <TouchableOpacity
+                  className="rounded-pill border border-accent px-md py-sm"
+                  onPress={openCustom}
+                  activeOpacity={0.8}>
+                  <Text className="text-accent" style={Type.caption}>
+                    Custom…
+                  </Text>
+                </TouchableOpacity>
               </View>
 
               <TouchableOpacity

@@ -51,29 +51,22 @@ export async function cancelReminder(itemId: string): Promise<void> {
 
 export type ReminderPreset = { label: string; date: Date };
 
+/** The next time today/tomorrow that the clock reads the given hour. */
+function nextAtHour(hour: number): Date {
+  const now = new Date();
+  const at = new Date(now);
+  at.setHours(hour, 0, 0, 0);
+  if (at.getTime() <= now.getTime()) at.setDate(at.getDate() + 1);
+  return at;
+}
+
 /** Quick-pick reminder times offered in the item actions sheet. */
 export function reminderPresets(): ReminderPreset[] {
-  const now = new Date();
-
-  const inOneHour = new Date(now.getTime() + 60 * 60 * 1000);
-
-  // 6pm today, or 6pm tomorrow if it's already evening.
-  const thisEvening = new Date(now);
-  thisEvening.setHours(18, 0, 0, 0);
-  if (thisEvening.getTime() <= now.getTime()) {
-    thisEvening.setDate(thisEvening.getDate() + 1);
-  }
-
-  const tomorrowMorning = new Date(now);
-  tomorrowMorning.setDate(tomorrowMorning.getDate() + 1);
-  tomorrowMorning.setHours(9, 0, 0, 0);
-
-  const inThreeDays = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
-
+  const now = Date.now();
   return [
-    { label: 'In 1 hour', date: inOneHour },
-    { label: 'This evening', date: thisEvening },
-    { label: 'Tomorrow 9am', date: tomorrowMorning },
-    { label: 'In 3 days', date: inThreeDays },
+    { label: '15 min', date: new Date(now + 15 * 60 * 1000) },
+    { label: '1 hour', date: new Date(now + 60 * 60 * 1000) },
+    { label: 'Evening 8pm', date: nextAtHour(20) },
+    { label: 'Morning 8am', date: nextAtHour(8) },
   ];
 }
