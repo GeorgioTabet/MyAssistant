@@ -1,31 +1,56 @@
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { Alert, FlatList, Text, View } from 'react-native';
 
 import { CaptureInput } from '@/components/capture-input';
 import { ItemRow } from '@/components/item-row';
 import { Screen } from '@/components/screen';
-import { LAYER_LIST, type LayerId } from '@/constants/layers';
 import { Type } from '@/constants/theme';
+import { getApiKey } from '@/lib/ai/api-key';
+import { ClassificationError, classifyText } from '@/lib/ai/classify';
 import { addItem, getAllItems, type Item } from '@/lib/db/items';
 
 export default function HomeScreen() {
   const [items, setItems] = useState<Item[]>([]);
+  const router = useRouter();
 
   // Reload from the database whenever the screen comes into focus, so the feed
-  // reflects items added elsewhere (e.g. on a layer screen later).
+  // reflects items added elsewhere (e.g. on a layer screen).
   useFocusEffect(
     useCallback(() => {
       setItems(getAllItems());
     }, [])
   );
 
-  const handleCapture = (text: string) => {
-    // Placeholder routing: cycles through the layers so the feed visibly
-    // updates. The AI classifier replaces this in a later phase.
-    const nextLayer: LayerId = LAYER_LIST[items.length % LAYER_LIST.length].id;
-    addItem(text, nextLayer);
-    setItems(getAllItems());
+  // Returns true only when the item was classified and saved — CaptureInput
+  // keeps the user's text on screen when this returns false.
+  const handleCapture = async (text: string): Promise<boolean> => {
+    const apiKey = await getApiKey();
+    if (!apiKey) {
+      Alert.alert(
+        'API key needed',
+        'Add your Anthropic API key in Settings before capturing anything.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Open Settings', onPress: () => router.push('/settings') },
+        ]
+      );
+      return false;
+    }
+
+    try {
+      const layer = await classifyText(text, apiKey);
+      addItem(text, layer);
+      setItems(getAllItems());
+      return true;
+    } catch (error) {
+      const message =
+        error instanceof ClassificationError
+          ? error.message
+          : 'Something went wrong. Try again.';
+      Alert.alert("Couldn't sort that", message);
+      return false;
+    }
   };
 
   return (

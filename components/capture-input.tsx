@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors, Type } from '@/constants/theme';
@@ -8,17 +8,20 @@ const c = Colors.dark;
 
 /**
  * The core capture box. The user types anything and submits; the parent
- * decides what happens with the text. AI classification/routing is wired up
- * in a later phase — for now `onSubmit` just receives the raw text.
+ * classifies and routes it. `onSubmit` resolves to `true` on success — only
+ * then is the input cleared, so a failed capture keeps the user's text.
  */
-export function CaptureInput({ onSubmit }: { onSubmit: (text: string) => void }) {
+export function CaptureInput({ onSubmit }: { onSubmit: (text: string) => Promise<boolean> }) {
   const [text, setText] = useState('');
-  const canSubmit = text.trim().length > 0;
+  const [busy, setBusy] = useState(false);
+  const canSubmit = text.trim().length > 0 && !busy;
 
-  const submit = () => {
-    if (!canSubmit) return;
-    onSubmit(text.trim());
-    setText('');
+  const submit = async () => {
+    if (text.trim().length === 0 || busy) return;
+    setBusy(true);
+    const ok = await onSubmit(text.trim());
+    setBusy(false);
+    if (ok) setText('');
   };
 
   return (
@@ -31,6 +34,7 @@ export function CaptureInput({ onSubmit }: { onSubmit: (text: string) => void })
         placeholder="Type anything…"
         placeholderTextColor={c.hint}
         multiline
+        editable={!busy}
       />
       <TouchableOpacity
         className={`h-9 w-9 items-center justify-center rounded-pill bg-accent ${
@@ -39,7 +43,11 @@ export function CaptureInput({ onSubmit }: { onSubmit: (text: string) => void })
         onPress={submit}
         disabled={!canSubmit}
         activeOpacity={0.8}>
-        <IconSymbol name="arrow.up" size={20} color={c.accentText} />
+        {busy ? (
+          <ActivityIndicator size="small" color={c.accentText} />
+        ) : (
+          <IconSymbol name="arrow.up" size={20} color={c.accentText} />
+        )}
       </TouchableOpacity>
     </View>
   );

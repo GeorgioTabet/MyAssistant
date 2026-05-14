@@ -1,20 +1,38 @@
 import Constants from 'expo-constants';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { Screen } from '@/components/screen';
 import { Colors, Type } from '@/constants/theme';
+import { getApiKey, setApiKey as saveApiKey } from '@/lib/ai/api-key';
 
 const c = Colors.dark;
 
 export default function SettingsScreen() {
   const [apiKey, setApiKey] = useState('');
   const [revealed, setRevealed] = useState(false);
-  const canSave = apiKey.trim().length > 0;
+  const [saved, setSaved] = useState(false);
+  const canSave = apiKey.trim().length > 0 && !saved;
 
-  // UI only for now. Saving to secure storage is wired up in the
-  // api-connect checklist step.
-  const save = () => {};
+  // Load the saved key on open so the field reflects what's stored.
+  useEffect(() => {
+    getApiKey().then((stored) => {
+      if (stored) {
+        setApiKey(stored);
+        setSaved(true);
+      }
+    });
+  }, []);
+
+  const handleChange = (value: string) => {
+    setApiKey(value);
+    setSaved(false);
+  };
+
+  const save = async () => {
+    await saveApiKey(apiKey.trim());
+    setSaved(true);
+  };
 
   return (
     <Screen title="Settings">
@@ -24,14 +42,14 @@ export default function SettingsScreen() {
         </Text>
         <Text className="text-muted" style={Type.caption}>
           Your key is what lets the app talk to Claude. It is stored only on this
-          device and never shared.
+          device, in encrypted storage, and never shared.
         </Text>
         <View className="mt-xs flex-row items-center gap-sm">
           <TextInput
             className="h-11 flex-1 rounded-sm border border-border bg-background px-md text-text"
             style={Type.body}
             value={apiKey}
-            onChangeText={setApiKey}
+            onChangeText={handleChange}
             placeholder="sk-ant-..."
             placeholderTextColor={c.hint}
             secureTextEntry={!revealed}
@@ -52,7 +70,7 @@ export default function SettingsScreen() {
           disabled={!canSave}
           activeOpacity={0.85}>
           <Text className="text-accent-text" style={Type.bodyMedium}>
-            Save key
+            {saved ? 'Saved' : 'Save key'}
           </Text>
         </TouchableOpacity>
       </View>
