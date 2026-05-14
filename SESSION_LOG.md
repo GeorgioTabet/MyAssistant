@@ -110,3 +110,21 @@ to `main` first.
 - Status: bundles, typechecks, and lints clean. NOT merged to `main` yet — awaiting device verification.
 - Next: test on device (swipe down on each screen), merge to `main`. Then:
   ship prep (app icon, EAS build, store submission) or the 5th layer group.
+
+---
+
+## 2026-05-14 — UI redesign (WHOOP-style rings)
+
+Visual redesign of Home + Layers on branch `feature/ui-redesign`. Pull-to-refresh
+polish was verified and merged to `main` first.
+- Installed `react-native-svg` + `expo-linear-gradient` (flagged + approved).
+- New `ArcRing` — an animated SVG ring that draws on (reanimated); one segment =
+  a gauge, several = a donut.
+- Home: segmented donut hero (`LayerDonutHero`) showing the layer breakdown with
+  the total in the centre + colour legend. Layers: 2x2 grid of per-layer ring
+  gauges (`LayerRingCard`). Added a `display` size to the type scale.
+- Scope was Home + Layers only — layer detail, Settings, and the actions sheet
+  still use the old styling.
+- Status: bundles, typechecks, and lints clean. NOT merged to `main` yet — awaiting device verification.
+- Next: test on device, merge to `main`, then restyle the remaining screens
+  (layer detail / Settings / actions sheet) to match.
