@@ -33,3 +33,18 @@ Set up NativeWind and migrated the whole UI to Tailwind `className` on branch
 - Status: bundles, typechecks, and lints clean. NOT merged to `main` yet — awaiting device verification.
 - Next: test on device (`npx expo start -c`), merge to `main`, then start
   `feature/persistence` — `expo-sqlite` in `lib/db/`.
+
+---
+
+## 2026-05-14 — SQLite persistence
+
+Added on-device persistence with `expo-sqlite` on branch `feature/persistence`.
+NativeWind was verified and merged to `main` first.
+- Installed `expo-sqlite`; created `lib/db/index.ts` (lazy DB open + `items`
+  table) and `lib/db/items.ts` (typed CRUD — all SQL contained here).
+- Home, Layers, and layer detail now read from the DB and refresh on focus; the
+  capture input saves items that survive app restarts. First launch starts empty.
+- Removed `lib/sample-items.ts`; the `Item` type now lives in `lib/db/items.ts`.
+- Status: bundles, typechecks, and lints clean. NOT merged to `main` yet — awaiting device verification.
+- Next: test on device (`npx expo start -c`), merge to `main`, then start
+  `feature/ai-classification` — API key via `expo-secure-store`, `lib/ai/`.
