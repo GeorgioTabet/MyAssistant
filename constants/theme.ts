@@ -12,14 +12,19 @@ import { Platform } from 'react-native';
 
 const palette = {
   bg: '#0F0F10', // app background — dark warm gray
-  surface: '#1A1A1C', // cards, bubbles, input bar — slightly lighter
+  surface: '#1A1A1C', // cards, input bar — slightly lighter
   text: '#F0EEE9', // primary text — warm off-white
   textMuted: '#8A8A8E', // secondary text, captions, icons
   hint: '#5C5C60', // placeholder text, disabled
-  accent: '#6B6BF0', // muted indigo — buttons, links, user bubble
-  accentText: '#FFFFFF', // text/icons sitting on the accent color
+  accent: '#6B6BF0', // muted indigo — buttons, links (also the Work layer)
+  accentText: '#FFFFFF', // text/icons sitting on an accent color
   destructive: '#E05555', // soft red — delete, errors
   border: 'rgba(255,255,255,0.08)', // hairline dividers, card outlines
+  // Layer accent colors — one per active layer (see constants/layers.ts)
+  work: '#6B6BF0',
+  health: '#34C759',
+  people: '#FF9F0A',
+  finance: '#30D158',
 };
 
 const theme = {
@@ -36,11 +41,11 @@ const theme = {
   icon: palette.textMuted,
   tabIconDefault: palette.textMuted,
   tabIconSelected: palette.accent,
-  // Chat bubbles
-  bubbleUser: palette.accent,
-  bubbleUserText: palette.accentText,
-  bubbleAssistant: palette.surface,
-  bubbleAssistantText: palette.text,
+  // Layer accent colors
+  work: palette.work,
+  health: palette.health,
+  people: palette.people,
+  finance: palette.finance,
 };
 
 export const Colors = {
@@ -62,7 +67,7 @@ export const Spacing = {
 export const Radius = {
   sm: 8,
   md: 12,
-  lg: 18, // chat bubbles
+  lg: 18,
   pill: 999,
 };
 
