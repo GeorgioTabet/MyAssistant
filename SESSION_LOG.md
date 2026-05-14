@@ -48,3 +48,18 @@ NativeWind was verified and merged to `main` first.
 - Status: bundles, typechecks, and lints clean. NOT merged to `main` yet — awaiting device verification.
 - Next: test on device (`npx expo start -c`), merge to `main`, then start
   `feature/ai-classification` — API key via `expo-secure-store`, `lib/ai/`.
+
+---
+
+## 2026-05-14 — AI classification
+
+Wired the core mechanic on branch `feature/ai-classification` — the capture
+input now routes through Claude. Persistence was verified and merged to `main` first.
+- Installed `expo-secure-store`; created `lib/ai/api-key.ts` (key in encrypted
+  storage) and `lib/ai/classify.ts` (Claude Haiku call via fetch → a layer id).
+- Settings loads/saves the API key. Home capture: type → Claude classifies →
+  saved to the right layer. No key → prompt to Settings; API failure → error
+  alert, text kept. CaptureInput shows a spinner while classifying.
+- Status: bundles, typechecks, and lints clean. NOT merged to `main` yet — awaiting device verification.
+- Next: test on device with a real API key (`npx expo start -c`), merge to
+  `main`. Core four-layer concept is then fully working end to end.
