@@ -19,6 +19,7 @@ const MAPPING = {
   'gearshape.fill': 'settings',
   'arrow.up': 'arrow-upward',
   'chevron.right': 'chevron-right',
+  'bell.fill': 'notifications',
   // Layer icons
   'briefcase.fill': 'work',
   'heart.fill': 'favorite',

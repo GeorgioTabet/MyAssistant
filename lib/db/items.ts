@@ -12,6 +12,8 @@ export type Item = {
   layer: LayerId;
   /** ISO timestamp of when the item was captured. */
   createdAt: string;
+  /** ISO timestamp of the reminder, or null if the item has no reminder. */
+  dueAt: string | null;
 };
 
 /** All items, newest first. */
@@ -43,13 +45,15 @@ export function addItem(text: string, layer: LayerId): Item {
     text,
     layer,
     createdAt: new Date().toISOString(),
+    dueAt: null,
   };
   getDb().runSync(
-    'INSERT INTO items (id, text, layer, createdAt) VALUES (?, ?, ?, ?)',
+    'INSERT INTO items (id, text, layer, createdAt, dueAt) VALUES (?, ?, ?, ?, ?)',
     item.id,
     item.text,
     item.layer,
-    item.createdAt
+    item.createdAt,
+    item.dueAt
   );
   return item;
 }
@@ -57,6 +61,11 @@ export function addItem(text: string, layer: LayerId): Item {
 /** Move an item to a different layer (used to correct AI misclassifications). */
 export function updateItemLayer(id: string, layer: LayerId): void {
   getDb().runSync('UPDATE items SET layer = ? WHERE id = ?', layer, id);
+}
+
+/** Set or clear an item's reminder time (ISO timestamp, or null to clear). */
+export function setItemDue(id: string, dueAt: string | null): void {
+  getDb().runSync('UPDATE items SET dueAt = ? WHERE id = ?', dueAt, id);
 }
 
 /** Delete an item by id. */
