@@ -6,6 +6,7 @@ import { CaptureInput } from '@/components/capture-input';
 import { ItemActionsSheet } from '@/components/item-actions-sheet';
 import { ItemRow } from '@/components/item-row';
 import { Screen } from '@/components/screen';
+import { ThemedRefreshControl } from '@/components/themed-refresh-control';
 import { Type } from '@/constants/theme';
 import { getApiKey } from '@/lib/ai/api-key';
 import { ClassificationError, classifyText } from '@/lib/ai/classify';
@@ -74,6 +75,7 @@ export default function HomeScreen() {
         }
         contentContainerClassName="gap-sm pb-xl"
         showsVerticalScrollIndicator={false}
+        refreshControl={<ThemedRefreshControl onRefresh={reload} />}
       />
       <ItemActionsSheet item={selected} onClose={() => setSelected(null)} onChanged={reload} />
     </Screen>

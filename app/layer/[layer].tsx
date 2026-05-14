@@ -4,6 +4,7 @@ import { FlatList, Text, View } from 'react-native';
 
 import { ItemActionsSheet } from '@/components/item-actions-sheet';
 import { ItemRow } from '@/components/item-row';
+import { ThemedRefreshControl } from '@/components/themed-refresh-control';
 import { LAYERS, type LayerId } from '@/constants/layers';
 import { Type } from '@/constants/theme';
 import { getItemsByLayer, type Item } from '@/lib/db/items';
@@ -41,6 +42,7 @@ export default function LayerDetailScreen() {
             }
             contentContainerClassName="gap-sm pt-md pb-xl"
             showsVerticalScrollIndicator={false}
+            refreshControl={<ThemedRefreshControl onRefresh={reload} />}
           />
           <ItemActionsSheet
             item={selected}
