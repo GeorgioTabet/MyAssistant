@@ -3,14 +3,21 @@ import { Alert, Modal, Pressable, Text, TouchableOpacity, View } from 'react-nat
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { LAYER_LIST, type LayerId } from '@/constants/layers';
 import { Colors, Type } from '@/constants/theme';
-import { deleteItem, updateItemLayer, type Item } from '@/lib/db/items';
+import { deleteItem, setItemDue, updateItemLayer, type Item } from '@/lib/db/items';
+import {
+  cancelReminder,
+  ensureNotificationPermission,
+  reminderPresets,
+  scheduleReminder,
+} from '@/lib/reminders';
+import { formatReminder } from '@/lib/time';
 
 const c = Colors.dark;
 
 /**
  * Bottom-sheet actions for a captured item: move it to a different layer
- * (to correct an AI misclassification) or delete it. Shown when `item` is
- * non-null; `onChanged` lets the parent screen refresh after a change.
+ * (to correct an AI misclassification), set/clear a reminder, or delete it.
+ * Shown when `item` is non-null; `onChanged` lets the parent screen refresh.
  */
 export function ItemActionsSheet({
   item,
@@ -28,6 +35,31 @@ export function ItemActionsSheet({
     onClose();
   };
 
+  const setReminder = async (date: Date) => {
+    if (!item) return;
+    const granted = await ensureNotificationPermission();
+    if (!granted) {
+      Alert.alert(
+        'Notifications are off',
+        'Enable notifications for MyAssistant in your phone settings to use reminders.'
+      );
+      return;
+    }
+    const iso = date.toISOString();
+    setItemDue(item.id, iso);
+    await scheduleReminder(item.id, item.text, iso);
+    onChanged();
+    onClose();
+  };
+
+  const clearReminder = async () => {
+    if (!item) return;
+    setItemDue(item.id, null);
+    await cancelReminder(item.id);
+    onChanged();
+    onClose();
+  };
+
   const confirmDelete = () => {
     if (!item) return;
     Alert.alert('Delete item', 'This permanently removes the item.', [
@@ -35,8 +67,9 @@ export function ItemActionsSheet({
       {
         text: 'Delete',
         style: 'destructive',
-        onPress: () => {
+        onPress: async () => {
           deleteItem(item.id);
+          await cancelReminder(item.id);
           onChanged();
           onClose();
         },
@@ -85,6 +118,32 @@ export function ItemActionsSheet({
                     </TouchableOpacity>
                   );
                 })}
+              </View>
+
+              <View className="flex-row items-center justify-between">
+                <Text className="text-muted tracking-[0.5px]" style={Type.small}>
+                  Remind me
+                </Text>
+                {item.dueAt ? (
+                  <TouchableOpacity onPress={clearReminder} hitSlop={8}>
+                    <Text style={[Type.caption, { color: c.destructive }]}>
+                      Clear ({formatReminder(item.dueAt)})
+                    </Text>
+                  </TouchableOpacity>
+                ) : null}
+              </View>
+              <View className="flex-row flex-wrap gap-sm">
+                {reminderPresets().map((preset) => (
+                  <TouchableOpacity
+                    key={preset.label}
+                    className="rounded-pill border border-border px-md py-sm"
+                    onPress={() => setReminder(preset.date)}
+                    activeOpacity={0.8}>
+                    <Text className="text-text" style={Type.caption}>
+                      {preset.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
               </View>
 
               <TouchableOpacity
