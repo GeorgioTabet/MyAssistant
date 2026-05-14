@@ -23,31 +23,17 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Today',
+          title: 'Home',
           tabBarIcon: ({ color }) => <IconSymbol size={26} name="house.fill" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="chat"
+        name="layers"
         options={{
-          title: 'Chat',
+          title: 'Layers',
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={26} name="bubble.left.and.bubble.right.fill" color={color} />
+            <IconSymbol size={26} name="square.stack.3d.up.fill" color={color} />
           ),
-        }}
-      />
-      <Tabs.Screen
-        name="tasks"
-        options={{
-          title: 'Tasks',
-          tabBarIcon: ({ color }) => <IconSymbol size={26} name="checklist" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="notes"
-        options={{
-          title: 'Notes',
-          tabBarIcon: ({ color }) => <IconSymbol size={26} name="note.text" color={color} />,
         }}
       />
       <Tabs.Screen

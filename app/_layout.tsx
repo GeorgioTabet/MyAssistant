@@ -3,6 +3,10 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
+import { Colors } from '@/constants/theme';
+
+const c = Colors.dark;
+
 export const unstable_settings = {
   anchor: '(tabs)',
 };
@@ -12,8 +16,15 @@ export const unstable_settings = {
 export default function RootLayout() {
   return (
     <ThemeProvider value={DarkTheme}>
-      <Stack>
+      <Stack
+        screenOptions={{
+          headerStyle: { backgroundColor: c.background },
+          headerTintColor: c.text,
+          headerShadowVisible: false,
+          contentStyle: { backgroundColor: c.background },
+        }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="layer/[layer]" options={{ headerShown: true }} />
       </Stack>
       <StatusBar style="light" />
     </ThemeProvider>
