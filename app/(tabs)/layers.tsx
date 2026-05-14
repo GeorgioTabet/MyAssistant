@@ -1,11 +1,11 @@
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { ScrollView, Text } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
-import { LayerCard } from '@/components/layer-card';
+import { LayerRingCard } from '@/components/layer-ring-card';
 import { Screen } from '@/components/screen';
 import { ThemedRefreshControl } from '@/components/themed-refresh-control';
-import { LAYER_LIST, type LayerId } from '@/constants/layers';
+import { LAYERS, LAYER_LIST, type LayerId } from '@/constants/layers';
 import { Type } from '@/constants/theme';
 import { countItemsByLayer } from '@/lib/db/items';
 
@@ -29,6 +29,10 @@ export default function LayersScreen() {
   // Refresh the per-layer counts each time the screen comes into focus.
   useFocusEffect(reload);
 
+  const total = LAYER_LIST.reduce((sum, layer) => sum + counts[layer.id], 0);
+  const open = (id: LayerId) =>
+    router.push({ pathname: '/layer/[layer]', params: { layer: id } });
+
   return (
     <Screen title="Layers">
       <ScrollView
@@ -38,16 +42,34 @@ export default function LayersScreen() {
         <Text className="mb-xs text-muted" style={Type.caption}>
           Everything you capture is sorted into one of these four layers.
         </Text>
-        {LAYER_LIST.map((layer) => (
-          <LayerCard
-            key={layer.id}
-            layer={layer}
-            count={counts[layer.id]}
-            onPress={() =>
-              router.push({ pathname: '/layer/[layer]', params: { layer: layer.id } })
-            }
+        <View className="flex-row gap-sm">
+          <LayerRingCard
+            layer={LAYERS.work}
+            count={counts.work}
+            total={total}
+            onPress={() => open('work')}
           />
-        ))}
+          <LayerRingCard
+            layer={LAYERS.health}
+            count={counts.health}
+            total={total}
+            onPress={() => open('health')}
+          />
+        </View>
+        <View className="flex-row gap-sm">
+          <LayerRingCard
+            layer={LAYERS.people}
+            count={counts.people}
+            total={total}
+            onPress={() => open('people')}
+          />
+          <LayerRingCard
+            layer={LAYERS.finance}
+            count={counts.finance}
+            total={total}
+            onPress={() => open('finance')}
+          />
+        </View>
       </ScrollView>
     </Screen>
   );

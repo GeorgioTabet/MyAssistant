@@ -50,6 +50,7 @@ export const Radius = radius;
 
 /** Type scale — size paired with its intended line height and weight. */
 export const Type = {
+  display: { fontSize: 44, lineHeight: 48, fontWeight: '700' as const },
   title: { fontSize: 26, lineHeight: 32, fontWeight: '600' as const },
   heading: { fontSize: 20, lineHeight: 26, fontWeight: '600' as const },
   body: { fontSize: 16, lineHeight: 22, fontWeight: '400' as const },

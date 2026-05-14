@@ -5,6 +5,7 @@ import { Alert, FlatList, Text, View } from 'react-native';
 import { CaptureInput } from '@/components/capture-input';
 import { ItemActionsSheet } from '@/components/item-actions-sheet';
 import { ItemRow } from '@/components/item-row';
+import { LayerDonutHero } from '@/components/layer-donut-hero';
 import { Screen } from '@/components/screen';
 import { ThemedRefreshControl } from '@/components/themed-refresh-control';
 import { Type } from '@/constants/theme';
@@ -61,10 +62,11 @@ export default function HomeScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <ItemRow item={item} onPress={() => setSelected(item)} />}
         ListHeaderComponent={
-          <View className="mb-xs gap-md">
+          <View className="mb-xs gap-lg">
             <CaptureInput onSubmit={handleCapture} />
+            <LayerDonutHero items={items} />
             <Text className="text-muted tracking-[0.5px]" style={Type.small}>
-              Recent
+              RECENT
             </Text>
           </View>
         }
