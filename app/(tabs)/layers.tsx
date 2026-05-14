@@ -1,14 +1,32 @@
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { ScrollView, Text } from 'react-native';
 
 import { LayerCard } from '@/components/layer-card';
 import { Screen } from '@/components/screen';
-import { LAYER_LIST } from '@/constants/layers';
+import { LAYER_LIST, type LayerId } from '@/constants/layers';
 import { Type } from '@/constants/theme';
-import { sampleItemsForLayer } from '@/lib/sample-items';
+import { countItemsByLayer } from '@/lib/db/items';
 
 export default function LayersScreen() {
   const router = useRouter();
+  const [counts, setCounts] = useState<Record<LayerId, number>>({
+    work: 0,
+    health: 0,
+    people: 0,
+    finance: 0,
+  });
+
+  // Refresh the per-layer counts each time the screen comes into focus.
+  useFocusEffect(
+    useCallback(() => {
+      const next = {} as Record<LayerId, number>;
+      for (const layer of LAYER_LIST) {
+        next[layer.id] = countItemsByLayer(layer.id);
+      }
+      setCounts(next);
+    }, [])
+  );
 
   return (
     <Screen title="Layers">
@@ -20,7 +38,7 @@ export default function LayersScreen() {
           <LayerCard
             key={layer.id}
             layer={layer}
-            count={sampleItemsForLayer(layer.id).length}
+            count={counts[layer.id]}
             onPress={() =>
               router.push({ pathname: '/layer/[layer]', params: { layer: layer.id } })
             }

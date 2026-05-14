@@ -2,7 +2,7 @@ import { Text, View } from 'react-native';
 
 import { LAYERS } from '@/constants/layers';
 import { Type } from '@/constants/theme';
-import type { Item } from '@/lib/sample-items';
+import type { Item } from '@/lib/db/items';
 import { relativeTime } from '@/lib/time';
 
 /** A single captured item in a feed — colour-coded by its layer. */

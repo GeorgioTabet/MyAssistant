@@ -1,15 +1,22 @@
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
 
 import { ItemRow } from '@/components/item-row';
 import { LAYERS, type LayerId } from '@/constants/layers';
 import { Type } from '@/constants/theme';
-import { sampleItemsForLayer } from '@/lib/sample-items';
+import { getItemsByLayer, type Item } from '@/lib/db/items';
 
 export default function LayerDetailScreen() {
   const params = useLocalSearchParams<{ layer: string }>();
   const layer = LAYERS[params.layer as LayerId];
-  const items = layer ? sampleItemsForLayer(layer.id) : [];
+  const [items, setItems] = useState<Item[]>([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (layer) setItems(getItemsByLayer(layer.id));
+    }, [layer])
+  );
 
   return (
     <View className="flex-1 bg-background px-lg">
