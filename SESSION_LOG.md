@@ -17,3 +17,19 @@ into per-layer detail screens. Sample data only, no AI or database yet.
 - Status: bundles, typechecks, and lints clean. NOT merged to `main` yet — awaiting device verification.
 - Next: test on device (`npx expo start -c`), merge to `main`, then decide on
   NativeWind + start AI classification and `expo-sqlite`.
+
+---
+
+## 2026-05-14 — NativeWind setup
+
+Set up NativeWind and migrated the whole UI to Tailwind `className` on branch
+`feature/nativewind`. Foundation was verified and merged to `main` first.
+- Installed `nativewind` + `tailwindcss`; added `babel.config.js`,
+  `metro.config.js`, `tailwind.config.ts`, `global.css`, `nativewind-env.d.ts`.
+- Created `constants/palette.ts` + `constants/scale.ts` as dependency-free
+  token sources shared by `theme.ts` and the Tailwind config.
+- Migrated all components + screens from `StyleSheet` to `className`; typography
+  still uses `Type` style objects.
+- Status: bundles, typechecks, and lints clean. NOT merged to `main` yet — awaiting device verification.
+- Next: test on device (`npx expo start -c`), merge to `main`, then start
+  `feature/persistence` — `expo-sqlite` in `lib/db/`.
