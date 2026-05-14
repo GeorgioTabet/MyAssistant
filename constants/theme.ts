@@ -10,22 +10,8 @@
 
 import { Platform } from 'react-native';
 
-const palette = {
-  bg: '#0F0F10', // app background — dark warm gray
-  surface: '#1A1A1C', // cards, input bar — slightly lighter
-  text: '#F0EEE9', // primary text — warm off-white
-  textMuted: '#8A8A8E', // secondary text, captions, icons
-  hint: '#5C5C60', // placeholder text, disabled
-  accent: '#6B6BF0', // muted indigo — buttons, links (also the Work layer)
-  accentText: '#FFFFFF', // text/icons sitting on an accent color
-  destructive: '#E05555', // soft red — delete, errors
-  border: 'rgba(255,255,255,0.08)', // hairline dividers, card outlines
-  // Layer accent colors — one per active layer (see constants/layers.ts)
-  work: '#6B6BF0',
-  health: '#34C759',
-  people: '#FF9F0A',
-  finance: '#30D158',
-};
+import { palette } from '@/constants/palette';
+import { radius, spacing } from '@/constants/scale';
 
 const theme = {
   text: palette.text,
@@ -53,23 +39,14 @@ export const Colors = {
   dark: theme,
 };
 
-/** Spacing scale (px) — use these instead of arbitrary numbers. */
-export const Spacing = {
-  xs: 4,
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 24,
-  xxl: 32,
-};
-
-/** Corner radius scale (px). */
-export const Radius = {
-  sm: 8,
-  md: 12,
-  lg: 18,
-  pill: 999,
-};
+/**
+ * Spacing and radius scales — re-exported from `constants/scale.ts`, which is
+ * also consumed by `tailwind.config.ts`. Prefer Tailwind classes (`p-lg`,
+ * `rounded-md`) in components; use these objects for JS-only style props
+ * (e.g. navigator options).
+ */
+export const Spacing = spacing;
+export const Radius = radius;
 
 /** Type scale — size paired with its intended line height and weight. */
 export const Type = {
