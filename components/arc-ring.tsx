@@ -98,6 +98,10 @@ export function ArcRing({
 
   return (
     <View
+      // The ring is never independently interactive — it's either decorative
+      // or sits inside a tappable card. Stay touch-transparent so taps reach
+      // the parent (otherwise the SVG swallows them).
+      pointerEvents="none"
       style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
       <Svg width={size} height={size} style={{ position: 'absolute' }}>
         <Circle
