@@ -33,6 +33,20 @@ Project rules for **MyAssistant**. These define how the project is built and
 - All database logic in `lib/db/`
 - All AI logic in `lib/ai/`
 
+## Git workflow
+
+Always follow this:
+
+- **`main` is always stable and working** — never commit directly to `main`.
+- **Every phase gets its own branch** named `feature/phase-name`
+  (e.g. `feature/foundation`, `feature/work-layer`).
+- **Commit regularly during a session** with a short descriptive message
+  (e.g. "add theme constants file").
+- **When a phase is fully working**, merge it into `main` and delete the
+  feature branch.
+- **Never merge broken or half-finished code into `main`.**
+- **Before starting any new phase, always confirm which branch we are on.**
+
 ## Design tokens
 
 Always import from `constants/theme.ts` — **never hardcode these values**.
