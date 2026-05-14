@@ -54,6 +54,11 @@ export function addItem(text: string, layer: LayerId): Item {
   return item;
 }
 
+/** Move an item to a different layer (used to correct AI misclassifications). */
+export function updateItemLayer(id: string, layer: LayerId): void {
+  getDb().runSync('UPDATE items SET layer = ? WHERE id = ?', layer, id);
+}
+
 /** Delete an item by id. */
 export function deleteItem(id: string): void {
   getDb().runSync('DELETE FROM items WHERE id = ?', id);

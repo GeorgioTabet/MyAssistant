@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 import { Alert, FlatList, Text, View } from 'react-native';
 
 import { CaptureInput } from '@/components/capture-input';
+import { ItemActionsSheet } from '@/components/item-actions-sheet';
 import { ItemRow } from '@/components/item-row';
 import { Screen } from '@/components/screen';
 import { Type } from '@/constants/theme';
@@ -12,15 +13,14 @@ import { addItem, getAllItems, type Item } from '@/lib/db/items';
 
 export default function HomeScreen() {
   const [items, setItems] = useState<Item[]>([]);
+  const [selected, setSelected] = useState<Item | null>(null);
   const router = useRouter();
 
+  const reload = useCallback(() => setItems(getAllItems()), []);
+
   // Reload from the database whenever the screen comes into focus, so the feed
-  // reflects items added elsewhere (e.g. on a layer screen).
-  useFocusEffect(
-    useCallback(() => {
-      setItems(getAllItems());
-    }, [])
-  );
+  // reflects items added or changed elsewhere (e.g. on a layer screen).
+  useFocusEffect(reload);
 
   // Returns true only when the item was classified and saved — CaptureInput
   // keeps the user's text on screen when this returns false.
@@ -41,7 +41,7 @@ export default function HomeScreen() {
     try {
       const layer = await classifyText(text, apiKey);
       addItem(text, layer);
-      setItems(getAllItems());
+      reload();
       return true;
     } catch (error) {
       const message =
@@ -58,7 +58,7 @@ export default function HomeScreen() {
       <FlatList
         data={items}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <ItemRow item={item} />}
+        renderItem={({ item }) => <ItemRow item={item} onPress={() => setSelected(item)} />}
         ListHeaderComponent={
           <View className="mb-xs gap-md">
             <CaptureInput onSubmit={handleCapture} />
@@ -75,6 +75,7 @@ export default function HomeScreen() {
         contentContainerClassName="gap-sm pb-xl"
         showsVerticalScrollIndicator={false}
       />
+      <ItemActionsSheet item={selected} onClose={() => setSelected(null)} onChanged={reload} />
     </Screen>
   );
 }
