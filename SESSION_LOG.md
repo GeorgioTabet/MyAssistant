@@ -98,3 +98,15 @@ was verified and merged to `main` first.
   15 min / 1 hour / Evening 8pm / Morning 8am, plus a "Custom…" option that
   opens a native date+time picker (Android dialogs / iOS inline). Still on
   `feature/reminders`, still awaiting device verification before merge.
+
+---
+
+## 2026-05-14 — Polish: pull-to-refresh
+
+Small polish pass on branch `feature/polish`. Reminders was verified and merged
+to `main` first.
+- Added `ThemedRefreshControl` (dark-themed `RefreshControl`) and wired
+  pull-to-refresh into the Home feed, Layers overview, and layer detail screens.
+- Status: bundles, typechecks, and lints clean. NOT merged to `main` yet — awaiting device verification.
+- Next: test on device (swipe down on each screen), merge to `main`. Then:
+  ship prep (app icon, EAS build, store submission) or the 5th layer group.
