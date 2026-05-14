@@ -93,3 +93,8 @@ was verified and merged to `main` first.
 - Status: bundles, typechecks, and lints clean. NOT merged to `main` yet — awaiting device verification.
 - Next: test on device (set a reminder ~2 min out, lock the phone, wait for the
   notification), merge to `main`, then a polish pass.
+- Update: reminders are now fully customizable — installed
+  `@react-native-community/datetimepicker` (flagged + approved). Presets are now
+  15 min / 1 hour / Evening 8pm / Morning 8am, plus a "Custom…" option that
+  opens a native date+time picker (Android dialogs / iOS inline). Still on
+  `feature/reminders`, still awaiting device verification before merge.
