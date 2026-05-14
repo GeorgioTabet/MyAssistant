@@ -63,3 +63,17 @@ input now routes through Claude. Persistence was verified and merged to `main` f
 - Status: bundles, typechecks, and lints clean. NOT merged to `main` yet — awaiting device verification.
 - Next: test on device with a real API key (`npx expo start -c`), merge to
   `main`. Core four-layer concept is then fully working end to end.
+
+---
+
+## 2026-05-14 — Item actions
+
+Added move/delete on branch `feature/item-actions`. AI classification was
+verified and merged to `main` first (the key-rejected issue was a paste
+problem — `API_Key.txt` had a label line; not an app bug).
+- Added `updateItemLayer` to `lib/db/items.ts`; built `ItemActionsSheet` (a
+  bottom-sheet modal) — tap an item to move it to another layer or delete it.
+- `ItemRow` is now tappable; wired the sheet into Home and layer detail.
+- Status: bundles, typechecks, and lints clean. NOT merged to `main` yet — awaiting device verification.
+- Next: test on device, merge to `main`, then start `feature/reminders`
+  (`expo-notifications` — due dates + notifications).
