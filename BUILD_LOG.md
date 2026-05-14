@@ -120,5 +120,24 @@ has its own real screens. Icon mappings for the new tab icons were added to
 
 **Checks:** TypeScript type-check and the linter both pass clean.
 
+---
+
+## Session 4 — Structure walkthrough & a cache fix (2026-05-14)
+
+**Understanding the project:** went through the whole folder structure together
+so the layout makes sense. The explanation was saved as `STRUCTURE.md` in the
+repo root — a map of every folder and file, alongside `DESIGN.md` and this log.
+
+**"It does not work" — fixed.** After Session 3, the app wouldn't run on the
+phone. The cause was **not** a code bug — the code bundled and type-checked
+clean. The problem was a stale **Metro bundler cache**: Session 3 deleted
+several files, and Metro kept serving the old cached versions, which crashed.
+
+- **Fix:** stop the dev server, restart it with `npx expo start -c` (the `-c`
+  clears the cache), then fully close and reopen Expo Go on the phone.
+- **Lesson for next time:** if the app suddenly breaks after files were added or
+  deleted — and the code itself looks fine — clear the Metro cache first with
+  `npx expo start -c` before hunting for a bug. It's the most common cause.
+
 **Next step (P2 continues):** connect the Chat screen to the Anthropic API so
 messages get real replies — the API key coming from the Settings screen.
