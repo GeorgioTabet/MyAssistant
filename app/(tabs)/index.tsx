@@ -1,14 +1,12 @@
 import { useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 
 import { CaptureInput } from '@/components/capture-input';
 import { ItemRow } from '@/components/item-row';
 import { Screen } from '@/components/screen';
 import { LAYER_LIST, type LayerId } from '@/constants/layers';
-import { Colors, Spacing, Type } from '@/constants/theme';
+import { Type } from '@/constants/theme';
 import { SAMPLE_ITEMS, type Item } from '@/lib/sample-items';
-
-const c = Colors.dark;
 
 export default function HomeScreen() {
   const [items, setItems] = useState<Item[]>(SAMPLE_ITEMS);
@@ -33,30 +31,16 @@ export default function HomeScreen() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <ItemRow item={item} />}
         ListHeaderComponent={
-          <View style={styles.header}>
+          <View className="mb-xs gap-md">
             <CaptureInput onSubmit={handleCapture} />
-            <Text style={styles.sectionLabel}>Recent</Text>
+            <Text className="text-muted tracking-[0.5px]" style={Type.small}>
+              Recent
+            </Text>
           </View>
         }
-        contentContainerStyle={styles.list}
+        contentContainerClassName="gap-sm pb-xl"
         showsVerticalScrollIndicator={false}
       />
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  list: {
-    paddingBottom: Spacing.xl,
-    gap: Spacing.sm,
-  },
-  header: {
-    gap: Spacing.md,
-    marginBottom: Spacing.xs,
-  },
-  sectionLabel: {
-    ...Type.small,
-    color: c.textMuted,
-    letterSpacing: 0.5,
-  },
-});

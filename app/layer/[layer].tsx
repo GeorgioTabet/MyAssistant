@@ -1,12 +1,10 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 
 import { ItemRow } from '@/components/item-row';
 import { LAYERS, type LayerId } from '@/constants/layers';
-import { Colors, Spacing, Type } from '@/constants/theme';
+import { Type } from '@/constants/theme';
 import { sampleItemsForLayer } from '@/lib/sample-items';
-
-const c = Colors.dark;
 
 export default function LayerDetailScreen() {
   const params = useLocalSearchParams<{ layer: string }>();
@@ -14,45 +12,31 @@ export default function LayerDetailScreen() {
   const items = layer ? sampleItemsForLayer(layer.id) : [];
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 bg-background px-lg">
       <Stack.Screen options={{ title: layer?.label ?? 'Layer' }} />
       {layer ? (
         <FlatList
           data={items}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <ItemRow item={item} />}
-          ListHeaderComponent={<Text style={styles.description}>{layer.description}</Text>}
-          ListEmptyComponent={<Text style={styles.empty}>Nothing here yet.</Text>}
-          contentContainerStyle={styles.list}
+          ListHeaderComponent={
+            <Text className="mb-xs text-muted" style={Type.caption}>
+              {layer.description}
+            </Text>
+          }
+          ListEmptyComponent={
+            <Text className="mt-xxl text-center text-muted" style={Type.body}>
+              Nothing here yet.
+            </Text>
+          }
+          contentContainerClassName="gap-sm pt-md pb-xl"
           showsVerticalScrollIndicator={false}
         />
       ) : (
-        <Text style={styles.empty}>Unknown layer.</Text>
+        <Text className="mt-xxl text-center text-muted" style={Type.body}>
+          Unknown layer.
+        </Text>
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: c.background,
-    paddingHorizontal: Spacing.lg,
-  },
-  list: {
-    paddingTop: Spacing.md,
-    paddingBottom: Spacing.xl,
-    gap: Spacing.sm,
-  },
-  description: {
-    ...Type.caption,
-    color: c.textMuted,
-    marginBottom: Spacing.xs,
-  },
-  empty: {
-    ...Type.body,
-    color: c.textMuted,
-    textAlign: 'center',
-    marginTop: Spacing.xxl,
-  },
-});

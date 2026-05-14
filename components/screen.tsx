@@ -1,15 +1,18 @@
+import { cssInterop } from 'nativewind';
 import { ReactNode } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Colors, Spacing, Type } from '@/constants/theme';
+import { Type } from '@/constants/theme';
 
-const c = Colors.dark;
+// SafeAreaView is a third-party component, so NativeWind needs to be told it
+// accepts a className (mapped onto its `style` prop).
+cssInterop(SafeAreaView, { className: 'style' });
 
 /**
  * Standard screen wrapper: dark background, safe-area aware, with an optional
  * title header. Set `padded={false}` when the screen manages its own padding
- * (e.g. the Chat screen, which needs an edge-to-edge message list).
+ * (e.g. an edge-to-edge list).
  */
 export function Screen({
   title,
@@ -21,35 +24,15 @@ export function Screen({
   padded?: boolean;
 }) {
   return (
-    <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
+    <SafeAreaView className="flex-1 bg-background" edges={['top', 'left', 'right']}>
       {title ? (
-        <View style={styles.header}>
-          <Text style={styles.title}>{title}</Text>
+        <View className="px-lg pt-sm pb-md">
+          <Text className="text-text" style={Type.title}>
+            {title}
+          </Text>
         </View>
       ) : null}
-      <View style={[styles.body, padded && styles.padded]}>{children}</View>
+      <View className={padded ? 'flex-1 px-lg' : 'flex-1'}>{children}</View>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: c.background,
-  },
-  header: {
-    paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.sm,
-    paddingBottom: Spacing.md,
-  },
-  title: {
-    ...Type.title,
-    color: c.text,
-  },
-  body: {
-    flex: 1,
-  },
-  padded: {
-    paddingHorizontal: Spacing.lg,
-  },
-});

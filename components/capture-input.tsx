@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { TextInput, TouchableOpacity, View } from 'react-native';
 
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors, Radius, Spacing, Type } from '@/constants/theme';
+import { Colors, Type } from '@/constants/theme';
 
 const c = Colors.dark;
 
@@ -22,9 +22,10 @@ export function CaptureInput({ onSubmit }: { onSubmit: (text: string) => void })
   };
 
   return (
-    <View style={styles.wrap}>
+    <View className="flex-row items-end gap-sm rounded-lg border border-border bg-surface p-sm">
       <TextInput
-        style={styles.input}
+        className="max-h-[140px] min-h-[36px] flex-1 px-sm py-sm text-text"
+        style={Type.body}
         value={text}
         onChangeText={setText}
         placeholder="Type anything…"
@@ -32,7 +33,9 @@ export function CaptureInput({ onSubmit }: { onSubmit: (text: string) => void })
         multiline
       />
       <TouchableOpacity
-        style={[styles.button, !canSubmit && styles.buttonDisabled]}
+        className={`h-9 w-9 items-center justify-center rounded-pill bg-accent ${
+          canSubmit ? '' : 'opacity-40'
+        }`}
         onPress={submit}
         disabled={!canSubmit}
         activeOpacity={0.8}>
@@ -41,37 +44,3 @@ export function CaptureInput({ onSubmit }: { onSubmit: (text: string) => void })
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    gap: Spacing.sm,
-    backgroundColor: c.surface,
-    borderRadius: Radius.lg,
-    borderWidth: 1,
-    borderColor: c.border,
-    padding: Spacing.sm,
-  },
-  input: {
-    flex: 1,
-    minHeight: 36,
-    maxHeight: 140,
-    paddingHorizontal: Spacing.sm,
-    paddingTop: Spacing.sm,
-    paddingBottom: Spacing.sm,
-    color: c.text,
-    ...Type.body,
-  },
-  button: {
-    width: 36,
-    height: 36,
-    borderRadius: Radius.pill,
-    backgroundColor: c.accent,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonDisabled: {
-    opacity: 0.4,
-  },
-});

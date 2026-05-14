@@ -1,21 +1,19 @@
 import { useRouter } from 'expo-router';
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import { ScrollView, Text } from 'react-native';
 
 import { LayerCard } from '@/components/layer-card';
 import { Screen } from '@/components/screen';
 import { LAYER_LIST } from '@/constants/layers';
-import { Colors, Spacing, Type } from '@/constants/theme';
+import { Type } from '@/constants/theme';
 import { sampleItemsForLayer } from '@/lib/sample-items';
-
-const c = Colors.dark;
 
 export default function LayersScreen() {
   const router = useRouter();
 
   return (
     <Screen title="Layers">
-      <ScrollView contentContainerStyle={styles.list} showsVerticalScrollIndicator={false}>
-        <Text style={styles.intro}>
+      <ScrollView contentContainerClassName="gap-sm pb-xl" showsVerticalScrollIndicator={false}>
+        <Text className="mb-xs text-muted" style={Type.caption}>
           Everything you capture is sorted into one of these four layers.
         </Text>
         {LAYER_LIST.map((layer) => (
@@ -32,15 +30,3 @@ export default function LayersScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  list: {
-    paddingBottom: Spacing.xl,
-    gap: Spacing.sm,
-  },
-  intro: {
-    ...Type.caption,
-    color: c.textMuted,
-    marginBottom: Spacing.xs,
-  },
-});

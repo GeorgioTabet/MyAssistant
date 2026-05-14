@@ -1,9 +1,9 @@
 import Constants from 'expo-constants';
 import { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { Screen } from '@/components/screen';
-import { Colors, Radius, Spacing, Type } from '@/constants/theme';
+import { Colors, Type } from '@/constants/theme';
 
 const c = Colors.dark;
 
@@ -18,15 +18,18 @@ export default function SettingsScreen() {
 
   return (
     <Screen title="Settings">
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Anthropic API Key</Text>
-        <Text style={styles.sectionHint}>
+      <View className="mt-lg gap-sm rounded-md border border-border bg-surface p-lg">
+        <Text className="text-text" style={Type.heading}>
+          Anthropic API Key
+        </Text>
+        <Text className="text-muted" style={Type.caption}>
           Your key is what lets the app talk to Claude. It is stored only on this
           device and never shared.
         </Text>
-        <View style={styles.inputRow}>
+        <View className="mt-xs flex-row items-center gap-sm">
           <TextInput
-            style={styles.input}
+            className="h-11 flex-1 rounded-sm border border-border bg-background px-md text-text"
+            style={Type.body}
             value={apiKey}
             onChangeText={setApiKey}
             placeholder="sk-ant-..."
@@ -36,27 +39,41 @@ export default function SettingsScreen() {
             autoCorrect={false}
           />
           <TouchableOpacity onPress={() => setRevealed((r) => !r)} hitSlop={8}>
-            <Text style={styles.reveal}>{revealed ? 'Hide' : 'Show'}</Text>
+            <Text className="text-accent" style={Type.caption}>
+              {revealed ? 'Hide' : 'Show'}
+            </Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity
-          style={[styles.saveBtn, !canSave && styles.saveBtnDisabled]}
+          className={`mt-xs h-11 items-center justify-center rounded-sm bg-accent ${
+            canSave ? '' : 'opacity-40'
+          }`}
           onPress={save}
           disabled={!canSave}
           activeOpacity={0.85}>
-          <Text style={styles.saveBtnText}>Save key</Text>
+          <Text className="text-accent-text" style={Type.bodyMedium}>
+            Save key
+          </Text>
         </TouchableOpacity>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>About</Text>
-        <View style={styles.aboutRow}>
-          <Text style={styles.aboutLabel}>App</Text>
-          <Text style={styles.aboutValue}>MyAssistant</Text>
+      <View className="mt-lg gap-sm rounded-md border border-border bg-surface p-lg">
+        <Text className="text-text" style={Type.heading}>
+          About
+        </Text>
+        <View className="flex-row justify-between py-xs">
+          <Text className="text-muted" style={Type.body}>
+            App
+          </Text>
+          <Text className="text-text" style={Type.body}>
+            MyAssistant
+          </Text>
         </View>
-        <View style={styles.aboutRow}>
-          <Text style={styles.aboutLabel}>Version</Text>
-          <Text style={styles.aboutValue}>
+        <View className="flex-row justify-between py-xs">
+          <Text className="text-muted" style={Type.body}>
+            Version
+          </Text>
+          <Text className="text-text" style={Type.body}>
             {Constants.expoConfig?.version ?? '1.0.0'}
           </Text>
         </View>
@@ -64,72 +81,3 @@ export default function SettingsScreen() {
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  section: {
-    backgroundColor: c.surface,
-    borderRadius: Radius.md,
-    borderWidth: 1,
-    borderColor: c.border,
-    padding: Spacing.lg,
-    marginTop: Spacing.lg,
-    gap: Spacing.sm,
-  },
-  sectionTitle: {
-    ...Type.heading,
-    color: c.text,
-  },
-  sectionHint: {
-    ...Type.caption,
-    color: c.textMuted,
-  },
-  inputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-    marginTop: Spacing.xs,
-  },
-  input: {
-    flex: 1,
-    height: 44,
-    paddingHorizontal: Spacing.md,
-    backgroundColor: c.background,
-    borderRadius: Radius.sm,
-    borderWidth: 1,
-    borderColor: c.border,
-    color: c.text,
-    ...Type.body,
-  },
-  reveal: {
-    ...Type.caption,
-    color: c.accent,
-  },
-  saveBtn: {
-    height: 44,
-    borderRadius: Radius.sm,
-    backgroundColor: c.accent,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: Spacing.xs,
-  },
-  saveBtnDisabled: {
-    opacity: 0.4,
-  },
-  saveBtnText: {
-    ...Type.bodyMedium,
-    color: c.accentText,
-  },
-  aboutRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: Spacing.xs,
-  },
-  aboutLabel: {
-    ...Type.body,
-    color: c.textMuted,
-  },
-  aboutValue: {
-    ...Type.body,
-    color: c.text,
-  },
-});
