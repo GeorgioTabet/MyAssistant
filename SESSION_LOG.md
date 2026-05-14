@@ -77,3 +77,19 @@ problem — `API_Key.txt` had a label line; not an app bug).
 - Status: bundles, typechecks, and lints clean. NOT merged to `main` yet — awaiting device verification.
 - Next: test on device, merge to `main`, then start `feature/reminders`
   (`expo-notifications` — due dates + notifications).
+
+---
+
+## 2026-05-14 — Reminders
+
+Added local-notification reminders on branch `feature/reminders`. Item actions
+was verified and merged to `main` first.
+- Installed `expo-notifications`; `lib/db/index.ts` now runs versioned
+  migrations (`PRAGMA user_version`) — added a nullable `dueAt` column.
+- `lib/reminders.ts`: permissions, schedule/cancel (keyed by item id), and
+  quick-pick preset times (1 hour / this evening / tomorrow 9am / 3 days).
+- Actions sheet has a "Remind me" section; the feed shows a bell + time for
+  items with a reminder. Deleting an item cancels its notification.
+- Status: bundles, typechecks, and lints clean. NOT merged to `main` yet — awaiting device verification.
+- Next: test on device (set a reminder ~2 min out, lock the phone, wait for the
+  notification), merge to `main`, then a polish pass.
