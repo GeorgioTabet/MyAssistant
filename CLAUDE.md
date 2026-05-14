@@ -47,6 +47,18 @@ Always follow this:
 - **Never merge broken or half-finished code into `main`.**
 - **Before starting any new phase, always confirm which branch we are on.**
 
+## Session logging
+
+At the end of **every session**, append a brief entry to `SESSION_LOG.md` in the
+project root. Never overwrite previous entries — **always append**. Keep each
+entry to **5–8 lines max**, including:
+
+- The date
+- What was built or changed
+- Which files were created or modified
+- Which branch was used
+- Where to pick up next
+
 ## Design tokens
 
 Always import from `constants/theme.ts` — **never hardcode these values**.
